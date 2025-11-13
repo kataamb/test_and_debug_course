@@ -1,0 +1,27 @@
+{
+  "database": {
+    "host": "172.18.0.2",
+    "port": 5432,
+    "type": "postgres",
+    "name": "adverts_db",
+    "users": {
+      "admin": {
+        "username": "postgres",
+        "password": "1234"
+      },
+      "authorized_user": {
+        "username": "authorized_user",
+        "password": "user"
+      },
+      "any_user": {
+        "username": "any_user",
+        "password": "anon"
+      }
+    }
+  },
+  "logging": {
+    "config": "log_config.json",
+    "level": "DEBUG"
+  }
+}
+

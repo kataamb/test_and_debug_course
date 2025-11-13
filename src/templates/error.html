@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Ошибка{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h2>Произошла ошибка</h2>
+    <div class="error-message">
+        <p>{{ error }}</p>
+    </div>
+    <div class="error-actions">
+        <a href="/" class="btn btn-primary">Вернуться на главную</a>
+        <a href="javascript:history.back()" class="btn btn-secondary">Назад</a>
+    </div>
+</div>
+
+<style>
+.error-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    border: 1px solid #f5c6cb;
+}
+
+.error-actions {
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+</style>
+{% endblock %}

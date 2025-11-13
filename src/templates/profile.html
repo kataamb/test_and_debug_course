@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+
+
+<nav class="profile-nav">
+    <div> {{user.name}}</div>
+    <ul>
+        <li><a href="/profile/create_advert">Создать объявление</a></li>
+    </ul>
+</nav>
+
+<div id="profile-content">
+    <!-- Здесь можно динамически показывать выбранный раздел -->
+</div>
+{% endblock %}

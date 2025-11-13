@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}База данных недоступна{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h2></h2>
+    <div class="error-message">
+        <p>{{ error }}</p>
+    </div>
+    <div class="error-actions">
+        <a href="/" class="btn btn-primary">Обновить страницу</a>
+        <a href="javascript:history.back()" class="btn btn-secondary">Назад</a>
+    </div>
+</div>
+
+{% endblock %}
