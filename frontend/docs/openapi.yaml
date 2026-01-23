@@ -1,0 +1,915 @@
+---
+openapi: 3.1.0
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+
+  "/api/v1/adverts/":
+    get:
+      tags:
+      - Adverts
+      summary: Get All Adverts
+      description: Get all adverts
+      operationId: get_all_adverts_api_v1_adverts__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertListResponseDTO"
+        '400':
+          description: Validation error
+        '401':
+          description: Authentication required
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Advert or category not found
+        '500':
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - Adverts
+      summary: Create Advert
+      operationId: create_advert_api_v1_adverts__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AdvertCreateDTO"
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertResponseDTO"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+      security:
+      - HTTPBearer: []
+  "/api/v1/adverts/search":
+    post:
+      tags:
+      - Adverts
+      summary: Get Search Adverts
+      description: Get all adverts
+      operationId: get_search_adverts_api_v1_adverts_search_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AdvertSearchRequestDTO"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertListResponseDTO"
+        '400':
+          description: Validation error
+        '401':
+          description: Authentication required
+        '403':
+          description: Not enough permissions
+        '404':
+          description: Advert or category not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+        '500':
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+  "/api/v1/adverts/created":
+    get:
+      tags:
+      - Adverts
+      summary: Get My Adverts
+      description: Get all adverts my created
+      operationId: get_my_adverts_api_v1_adverts_created_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertListResponseDTO"
+      security:
+      - HTTPBearer: []
+  "/api/v1/adverts/liked":
+    get:
+      tags:
+      - Adverts
+      summary: Get Liked Adverts
+      description: Get all adverts liked
+      operationId: get_liked_adverts_api_v1_adverts_liked_get
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertListResponseDTO"
+        '401':
+          description: Authentication required
+        '500':
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+  "/api/v1/adverts/deals":
+    get:
+      tags:
+      - Adverts
+      summary: Get In Deals Adverts
+      description: Get all adverts in deals
+      operationId: get_in_deals_adverts_api_v1_adverts_deals_get
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertListResponseDTO"
+        '401':
+          description: Authentication required
+        '500':
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+  "/api/v1/adverts/{advert_id}":
+    get:
+      tags:
+      - Adverts
+      summary: Get Advert
+      description: Get advert by ID
+      operationId: get_advert_api_v1_adverts__advert_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: advert_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Advert Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertResponseDTO"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    put:
+      tags:
+      - Adverts
+      summary: Update Advert Full
+      description: Update advert (full update) - только для владельца
+      operationId: update_advert_full_api_v1_adverts__advert_id__put
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: advert_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Advert Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AdvertUpdateFullDTO"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertResponseDTO"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    patch:
+      tags:
+      - Adverts
+      summary: Update Advert Partial
+      description: Update advert (partial update) - только для владельца
+      operationId: update_advert_partial_api_v1_adverts__advert_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: advert_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Advert Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AdvertUpdatePartialDTO"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AdvertResponseDTO"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+      - Adverts
+      summary: Delete Advert
+      description: Delete advert - только для владельца
+      operationId: delete_advert_api_v1_adverts__advert_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: advert_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Advert Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/categories/":
+    get:
+      tags:
+      - Categories
+      summary: Get All Categories
+      description: Get all categories
+      operationId: get_all_categories_api_v1_categories__get
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CategoryListResponseDTO"
+        '500':
+          description: Internal server error
+  "/api/v1/categories/{category_id}":
+    get:
+      tags:
+      - Categories
+      summary: Get Category
+      description: Get category by ID
+      operationId: get_category_api_v1_categories__category_id__get
+      parameters:
+      - name: category_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Category Id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                title: Response Get Category Api V1 Categories  Category Id  Get
+        '404':
+          description: Category not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+        '500':
+          description: Internal server error
+
+  "/api/v1/users/register":
+    post:
+      tags:
+      - Users
+      summary: Register User
+      description: Register new user
+      operationId: register_user_api_v1_users_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserRegister"
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/users/login":
+    post:
+      tags:
+      - Users
+      summary: Login User
+      description: User login
+      operationId: login_user_api_v1_users_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserLogin"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TokenResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/v1/users/logout":
+    post:
+      tags:
+      - Users
+      summary: Logout User
+      description: User logout
+      operationId: logout_user_api_v1_users_logout_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SuccessResponse"
+  "/api/v1/users/me":
+    get:
+      tags:
+      - Users
+      summary: Get Current User Profile
+      operationId: get_current_user_profile_api_v1_users_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserResponse"
+      security:
+      - HTTPBearer: []
+      - HTTPBearer: []
+  "/api/v1/adverts/{advert_id}/likes":
+    post:
+      tags:
+      - Likes
+      summary: Add Like
+      description: Like an advert
+      operationId: add_like_api_v1_adverts__advert_id__likes_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: advert_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Advert Id
+      responses:
+        '201':
+          description: Like added successfully
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LikeResponseDTO"
+        '401':
+          description: Authentication required
+        '403':
+          description: Cannot like own advert
+        '404':
+          description: Advert not found
+        '409':
+          description: Like already exists
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+      - Likes
+      summary: Remove Like
+      description: Remove like from advert
+      operationId: remove_like_api_v1_adverts__advert_id__likes_delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: advert_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Advert Id
+      responses:
+        '204':
+          description: Like removed successfully
+        '401':
+          description: Authentication required
+        '404':
+          description: Like not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+        '500':
+          description: Internal server error
+  "/api/v1/deals/":
+    post:
+      tags:
+      - Deals
+      summary: Create Deal
+      description: Create a deal
+      operationId: create_deal_api_v1_deals__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DealCreateRequestDTO"
+        required: true
+      responses:
+        '201':
+          description: Deal created successfully
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DealResponseDTO"
+        '400':
+          description: Validation error
+        '401':
+          description: Authentication required
+        '403':
+          description: Cannot create deal for own advert
+        '404':
+          description: Advert not found
+        '409':
+          description: Deal already exists
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+        '500':
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    AdvertCreateDTO:
+      properties:
+        content:
+          type: string
+          title: Content
+        description:
+          type: string
+          title: Description
+        price:
+          type: integer
+          title: Price
+        id_category:
+          type: string
+          format: uuid
+          title: Id Category
+          example: bd29f255-50ab-4967-bc77-475a5fbe7952
+      type: object
+      required:
+      - content
+      - description
+      - price
+      title: AdvertCreateDTO
+    AdvertListResponseDTO:
+      properties:
+        items:
+          items:
+            "$ref": "#/components/schemas/AdvertResponseDTO"
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: AdvertListResponseDTO
+    AdvertResponseDTO:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        content:
+          type: string
+          title: Content
+        description:
+          type: string
+          title: Description
+        price:
+          type: integer
+          title: Price
+        id_category:
+          type: string
+          format: uuid
+          title: Id Category
+        id_seller:
+          type: string
+          format: uuid
+          title: Id Seller
+        date_created:
+          type: string
+          format: date-time
+          title: Date Created
+        category_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category Name
+        seller_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Seller Name
+          default: some guy
+        is_created:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Created
+        is_liked:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Liked
+        is_bought:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Bought
+        is_bought_by_current:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Bought By Current
+      type: object
+      required:
+      - id
+      - content
+      - description
+      - price
+      - id_category
+      - id_seller
+      - date_created
+      title: AdvertResponseDTO
+    AdvertSearchRequestDTO:
+      properties:
+        query:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Query
+        id_category:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Id Category
+      type: object
+      title: AdvertSearchRequestDTO
+    AdvertUpdateFullDTO:
+      properties:
+        content:
+          type: string
+          title: Content
+        description:
+          type: string
+          title: Description
+        price:
+          type: integer
+          title: Price
+        id_category:
+          type: string
+          format: uuid
+          title: Id Category
+          example: bd29f255-50ab-4967-bc77-475a5fbe7952
+      type: object
+      title: AdvertUpdateFullDTO
+    AdvertUpdatePartialDTO:
+      properties:
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        price:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Price
+        id_category:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Id Category
+          example: bd29f255-50ab-4967-bc77-475a5fbe7952
+      type: object
+      title: AdvertUpdatePartialDTO
+    CategoryListResponseDTO:
+      properties:
+        items:
+          items:
+            "$ref": "#/components/schemas/CategoryResponseDTO"
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: CategoryListResponseDTO
+    CategoryResponseDTO:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          example: a1b2c3d4-1234-5678-9012-abcdef123456
+        name:
+          type: string
+          title: Name
+          example: Electronics
+      type: object
+      required:
+      - id
+      - name
+      title: CategoryResponseDTO
+    DealCreateRequestDTO:
+      properties:
+        advert_id:
+          type: string
+          format: uuid
+          title: Advert Id
+          example: a1b2c3d4-1234-5678-9012-abcdef123456
+      type: object
+      required:
+      - advert_id
+      title: DealCreateRequestDTO
+    DealResponseDTO:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          example: b2c3d4e5-2345-6789-0123-bcdef1234567
+        advert_id:
+          type: string
+          format: uuid
+          title: Advert Id
+          example: a1b2c3d4-1234-5678-9012-abcdef123456
+        customer_id:
+          type: string
+          format: uuid
+          title: Customer Id
+          example: c3d4e5f6-3456-7890-1234-cdef12345678
+      type: object
+      required:
+      - id
+      - advert_id
+      - customer_id
+      title: DealResponseDTO
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            "$ref": "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    LikeResponseDTO:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          example: b2c3d4e5-2345-6789-0123-bcdef1234567
+        advert_id:
+          type: string
+          format: uuid
+          title: Advert Id
+          example: a1b2c3d4-1234-5678-9012-abcdef123456
+        customer_id:
+          type: string
+          format: uuid
+          title: Customer Id
+          example: c3d4e5f6-3456-7890-1234-cdef12345678
+      type: object
+      required:
+      - id
+      - advert_id
+      - customer_id
+      title: LikeResponseDTO
+    SuccessResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+          default: true
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: SuccessResponse
+    TokenResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+        expires_in:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expires In
+      type: object
+      required:
+      - access_token
+      title: TokenResponse
+    UserLogin:
+      properties:
+        email:
+          type: string
+          title: Email
+          example: edward23@yahoo.com
+        password:
+          type: string
+          title: Password
+          example: '123'
+      type: object
+      required:
+      - email
+      - password
+      title: UserLogin
+    UserRegister:
+      properties:
+        username:
+          type: string
+          title: Username
+          example: john_doe
+        email:
+          type: string
+          title: Email
+          example: john@example.com
+        full_name:
+          type: string
+          title: Full Name
+          example: John Doe
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+          example: "+1234567890"
+        password:
+          type: string
+          title: Password
+          example: '123'
+        rep_password:
+          type: string
+          title: Rep Password
+          example: '123'
+      type: object
+      required:
+      - username
+      - email
+      - full_name
+      - password
+      - rep_password
+      title: UserRegister
+    UserResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        username:
+          type: string
+          title: Username
+        email:
+          type: string
+          title: Email
+        nickname:
+          type: string
+          title: Nickname
+        full_name:
+          type: string
+          title: Full Name
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+      type: object
+      required:
+      - id
+      - username
+      - email
+      - nickname
+      - full_name
+      title: UserResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer
+
