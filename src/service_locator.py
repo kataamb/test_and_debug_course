@@ -1,20 +1,13 @@
 from __future__ import annotations
 
-import asyncio
-import os
 from dataclasses import dataclass
 from typing import AsyncGenerator
 from fastapi import Request
-from typing import AsyncGenerator, Literal, Union
-from dataclasses import dataclass
-from typing import AsyncGenerator, Literal, Union
-from fastapi import Request
+from typing import Union
 from sqlalchemy.ext.asyncio import AsyncSession
 from clickhouse_connect.driver import AsyncClient
 
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, AsyncEngine, async_sessionmaker
-from sqlalchemy import text
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from core.db import create_session
 from core.db_config import get_db_type
@@ -29,13 +22,7 @@ from repositories.user_repository import UserRepository
 # Репозитории для ClickHouse
 from repositories.category_repository_ch import ClickhouseCategoryRepository
 from repositories.advert_repository_ch import ClickhouseAdvertRepository
-'''
 
-
-from repositories.deal_repository import ClickhouseDealRepository
-from repositories.liked_repository import ClickhouseLikedRepository
-from repositories.user_repository import ClickhouseUserRepository
-'''
 
 # Билдеры для PostgreSQL
 from sql_builders.advert_sql_builder import AdvertsSqlBuilder
@@ -47,13 +34,7 @@ from sql_builders.user_sql_builder import UserSqlBuilder
 # Билдеры для ClickHouse
 from sql_builders.category_sql_builder_ch import ClickhouseCategorySqlBuilder
 from sql_builders.advert_sql_builder_ch import ClickhouseAdvertSqlBuilder
-'''
 
-
-from sql_builders.clickhouse.deal_sql_builder import ClickhouseDealSqlBuilder
-from sql_builders.clickhouse.liked_sql_builder import ClickhouseLikedSqlBuilder
-from sql_builders.clickhouse.user_sql_builder import ClickhouseUserSqlBuilder
-'''
 
 # Сервисы
 from services.advert_service import AdvertService

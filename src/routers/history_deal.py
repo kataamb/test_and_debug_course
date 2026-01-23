@@ -4,9 +4,7 @@ from services.history_deal_service import HistoryDealService
 from repositories.history_deal_repository import HistoryDealRepository
 from i_sql_builders.ihistory_deal_sql_builder import IHistoryDealSqlBuilder
 from sql_builders.history_deal_sql_builder import HistoryDealSqlBuilder
-from sqlalchemy.ext.asyncio import AsyncSession
 from core.db import get_session
-from typing import Literal
 
 router_history = APIRouter()
 

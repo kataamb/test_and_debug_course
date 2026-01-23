@@ -5,7 +5,7 @@ from uuid import UUID
 from service_locator import get_locator, ServiceLocator
 
 templates = Jinja2Templates(directory="templates")
-likes_router = APIRouter()
+likes_router = APIRouter(prefix="/api/v0_1/likes")
 
 
 @likes_router.post("/like/{item_id}")

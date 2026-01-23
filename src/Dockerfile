@@ -23,9 +23,14 @@ COPY ./routers ./routers
 COPY ./services ./services
 COPY ./sql_builders ./sql_builders
 COPY ./templates ./templates
+COPY ./static ./static
 COPY ./tests ./tests
 COPY ./auth ./auth
 COPY config.json log_config.json main.py service_locator.py ./
+COPY ./api_v1/ ./api_v1
+COPY ./schemas ./schemas
+
+
 
 CMD ["poetry", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 

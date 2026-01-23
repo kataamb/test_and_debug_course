@@ -9,12 +9,14 @@ class DealSqlBuilder(IDealSqlBuilder):
     def create_deal(self, user_id: UUID, advert_id: UUID, address: str = "online") -> TextAndParams:
         sql = text("""
             INSERT INTO adv_uuid.deals (id_customer, id_advert, address)
-            VALUES (:id_customer, :id_advert, :address)
+            SELECT c.id, :advert_id, :address
+            FROM adv_uuid.customers c
+            WHERE c.profile_id = :user_id
             RETURNING id, id_customer, id_advert, date_created, address
         """)
         params: SqlParams = {
-            "id_customer": user_id,
-            "id_advert": advert_id,
+            "user_id": user_id,
+            "advert_id": advert_id,
             "address": address
         }
         return sql, params
@@ -24,18 +26,23 @@ class DealSqlBuilder(IDealSqlBuilder):
             SELECT a.* 
             FROM adv_uuid.adverts a
             JOIN adv_uuid.deals d ON a.id = d.id_advert
-            WHERE d.id_customer = :user_id
+            JOIN adv_uuid.customers c ON d.id_customer = c.id
+            WHERE c.profile_id = :user_id
             ORDER BY a.date_created DESC
         """)
         return sql, {"user_id": user_id}
 
     def is_in_deals(self, user_id: UUID, advert_id: UUID) -> TextAndParams:
-        return (
-            text("SELECT 1 FROM adv_uuid.deals WHERE id_customer = :uid AND id_advert = :aid LIMIT 1"),
-            {"uid": user_id, "aid": advert_id}
-        )
+        sql = text("""
+            SELECT 1 
+            FROM adv_uuid.deals d
+            JOIN adv_uuid.customers c ON d.id_customer = c.id
+            WHERE c.profile_id = :uid AND d.id_advert = :aid 
+            LIMIT 1
+        """)
+        return sql, {"uid": user_id, "aid": advert_id}
 
-    def is_bought(self,  advert_id: UUID) -> TextAndParams:
+    def is_bought(self, advert_id: UUID) -> TextAndParams:
         return (
             text("SELECT 1 FROM adv_uuid.deals WHERE id_advert = :aid LIMIT 1"),
             {"aid": advert_id}

@@ -6,8 +6,8 @@ from dto.advert_dto import AdvertWithCategoryDTO
 from uuid import UUID
 
 templates = Jinja2Templates(directory="templates")
-main_router = APIRouter()
-
+main_router = APIRouter(prefix="/api/v0_1/main")
+prefstr = "/api/v0_1/main"
 
 @main_router.get("/", response_class=HTMLResponse)
 async def index(request: Request, locator: ServiceLocator = Depends(get_locator)):
@@ -73,5 +73,5 @@ async def search_adverts(request: Request, q: str, locator: ServiceLocator = Dep
 @main_router.get("/profile", response_class=HTMLResponse)
 async def profile_page(request: Request):
     if not request.state.user:
-        return RedirectResponse(url="/login", status_code=303)
+        return RedirectResponse(url=prefstr+"/login", status_code=303)
     return templates.TemplateResponse("profile.html", {"request": request, "user": request.state.user})

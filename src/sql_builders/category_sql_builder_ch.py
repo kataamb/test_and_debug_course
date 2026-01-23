@@ -1,6 +1,5 @@
 # sql_builders/clickhouse/category_sql_builder.py
 from __future__ import annotations
-from sqlalchemy import text
 from i_sql_builders.icategory_sql_builder import ICategorySqlBuilder
 from i_sql_builders.sql_types.sql_types import TextAndParams
 from uuid import UUID

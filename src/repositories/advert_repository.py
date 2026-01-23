@@ -17,6 +17,7 @@ class AdvertsRepository(IAdvertRepository):
             sql, params = self.builder.create(advert)
             result = await self.session.execute(sql, params)
             row = result.mappings().first()
+            print(row)
             await self.session.commit()
             return Advert(**row)
         except IntegrityError:
@@ -43,7 +44,7 @@ class AdvertsRepository(IAdvertRepository):
             result = await self.session.execute(sql, params)
             return [Advert(**r) for r in result.mappings()]
         except SQLAlchemyError:
-            return []
+            raise
 
     async def get_advert_by_user(self, user_id: UUID) -> List[Advert]:
         try:
@@ -51,7 +52,7 @@ class AdvertsRepository(IAdvertRepository):
             result = await self.session.execute(sql, params)
             return [Advert(**r) for r in result.mappings()]
         except SQLAlchemyError:
-            return []
+            raise
 
     async def is_created(self, user_id: UUID, advert_id: UUID) -> bool:
         try:
@@ -67,7 +68,7 @@ class AdvertsRepository(IAdvertRepository):
             result = await self.session.execute(sql, params)
             return [Advert(**r) for r in result.mappings()]
         except SQLAlchemyError:
-            return []
+            raise
 
     async def get_adverts_by_filter(self, begin_time: datetime, end_time: datetime) -> List[Advert]:
         try:
@@ -75,7 +76,7 @@ class AdvertsRepository(IAdvertRepository):
             result = await self.session.execute(sql, params)
             return [Advert(**r) for r in result.mappings()]
         except SQLAlchemyError:
-            return []
+            raise
 
     async def get_adverts_by_category(self, category_id: UUID) -> List[Advert]:
         try:
@@ -83,7 +84,47 @@ class AdvertsRepository(IAdvertRepository):
             result = await self.session.execute(sql, params)
             return [Advert(**r) for r in result.mappings()]
         except SQLAlchemyError:
-            return []
+            raise
+
+    async def get_adverts_by_category_and_keyword(self, keyword: str, category_id: UUID) -> List[Advert]:
+        try:
+            sql, params = self.builder.by_category_and_keyword(keyword, category_id)
+            result = await self.session.execute(sql, params)
+            return [Advert(**r) for r in result.mappings()]
+        except SQLAlchemyError:
+            raise
+
+    async def update_advert(self, advert_id: UUID, advert: Advert) -> Advert:
+        """
+        Полное обновление объявления
+        """
+        try:
+            sql, params = self.builder.update_full(advert_id, advert)
+            result = await self.session.execute(sql, params)
+            row = result.mappings().first()
+            if not row:
+                raise ValueError(f"Advert with id {advert_id} not found")
+            await self.session.commit()
+            return Advert(**row)
+        except SQLAlchemyError:
+            await self.session.rollback()
+            raise
+
+    async def partial_update_advert(self, advert_id: UUID, update_data: dict) -> Advert:
+        """
+        Частичное обновление объявления
+        """
+        try:
+            sql, params = self.builder.update_partial(advert_id, update_data)
+            result = await self.session.execute(sql, params)
+            row = result.mappings().first()
+            if not row:
+                raise ValueError(f"Advert with id {advert_id} not found")
+            await self.session.commit()
+            return Advert(**row)
+        except SQLAlchemyError:
+            await self.session.rollback()
+            raise
 
     async def delete_advert(self, advert_id: UUID, user_id: UUID) -> None:
         try:

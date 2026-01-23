@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from service_locator import get_locator, ServiceLocator
 
 templates = Jinja2Templates(directory="templates")
-user_router = APIRouter()
+user_router = APIRouter(prefix="/api/v0_1/users")
 
 
 # Страница логина

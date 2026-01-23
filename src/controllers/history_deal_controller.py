@@ -1,7 +1,6 @@
 from fastapi import Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from service_locator import ServiceLocator
 from services.history_deal_service import  HistoryDealService
 
 templates = Jinja2Templates(directory="templates")

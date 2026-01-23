@@ -3,12 +3,10 @@ from core.db_utils import execute_query
 from models.category import *
 from typing import List
 from clickhouse_connect.driver import AsyncClient
-from clickhouse_connect.driver.exceptions import ClickHouseError
 from abstract_repositories.icategory_repository import ICategoryRepository
 from i_sql_builders.icategory_sql_builder import ICategorySqlBuilder
 from models.category import Category
 from uuid import UUID
-import logging
 
 
 class ClickhouseCategoryRepository(ICategoryRepository):
@@ -33,7 +31,7 @@ class ClickhouseCategoryRepository(ICategoryRepository):
             else:  # PostgreSQL
                 return [Category(**row) for row in result.mappings()]
 
-        except Exception as e:
+        except Exception:
             return []
 
     async def get_name_by_id(self, id_category: UUID) -> str:
@@ -48,5 +46,5 @@ class ClickhouseCategoryRepository(ICategoryRepository):
             # ClickHouse возвращает результат в result_set
             return result.result_set[0][0]  # Первая колонка первого ряда
 
-        except Exception as e:
+        except Exception:
             return "Ошибка при получении категории"

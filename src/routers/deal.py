@@ -6,9 +6,9 @@ from service_locator import get_locator, ServiceLocator
 from uuid import UUID
 
 templates = Jinja2Templates(directory="templates")
-deals_router = APIRouter()
+deals_router = APIRouter(prefix="/api/v0_1/deals")
 
-
+prefstr = "/api/v0_1/main"
 @deals_router.post("/deal_create/{item_id}")
 async def create_deal(
         request: Request,
@@ -16,7 +16,7 @@ async def create_deal(
         locator: ServiceLocator = Depends(get_locator)
 ):
     if not request.state.user:
-        return RedirectResponse(url="/login", status_code=303)
+        return RedirectResponse(url=prefstr+"/login", status_code=303)
 
     user_id = request.state.user["id"]
     deals_service = locator.deals_service()

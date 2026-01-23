@@ -19,35 +19,12 @@ services:
       timeout: 10s
       retries: 3
 
-  clickhouse:
-    image: clickhouse/clickhouse-server:latest
-    container_name: clickhouse_container
-    ports:
-      - "8123:8123"
-      - "9000:9000"
-    volumes:
-      - ./clickhouse_data:/var/lib/clickhouse
-    environment:
-      - CLICKHOUSE_DB=default
-      - CLICKHOUSE_USER=default
-      - CLICKHOUSE_PASSWORD=1234
-      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
-    restart: unless-stopped
-    networks:
-      - my-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   app:
     build: .
     container_name: adverts_app_container
     depends_on:
       database:
-        condition: service_healthy
-      clickhouse:
         condition: service_healthy
     environment:
       - DB_HOST=database
@@ -68,6 +45,33 @@ services:
       - ./logs:/app/logs
     networks:
       - my-network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/usr/share/nginx/static
+    networks:
+      - my-network
+    depends_on: # ← ДОБАВЬ ЭТО
+      - app              # ← Ждать запуска app
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "8080:80"
+    networks:
+      - my-network
+    depends_on:
+      - database
     restart: unless-stopped
 
 networks:

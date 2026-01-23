@@ -22,6 +22,8 @@ dependencies = [
     "python-multipart (>=0.0.20,<0.0.21)",
     "pytest-cov (>=7.0.0,<8.0.0)",
     "clickhouse-connect (>=0.9.1,<0.10.0)",
+    "tasks (>=2.8.0,<3.0.0)",
+    "pyyaml (>=6.0.3,<7.0.0)",
 ]
 
 
@@ -34,3 +36,16 @@ mypy = "^1.17.1"
 ruff = "^0.12.9"
 pytest = "^8.4.1"
 
+
+[tool.poetry.group.test.dependencies]
+pytest-random-order = "^1.2.0"
+allure-pytest = "^2.15.2"
+faker = "^38.2.0"
+testcontainers = "^4.13.3"
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: integration tests with real database",
+    "unit: unit tests with mocks",
+    "slow: slow running tests"
+]

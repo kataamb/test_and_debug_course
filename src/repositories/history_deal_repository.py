@@ -2,7 +2,6 @@ from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from models.history_deal import HistoryDeal
-from models.advert import Advert
 from abstract_repositories.ihistory_deal_repository import IHistoryDealRepository
 from i_sql_builders.ihistory_deal_sql_builder import IHistoryDealSqlBuilder
 

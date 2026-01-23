@@ -7,13 +7,13 @@ from models.advert import Advert
 from uuid import UUID
 
 templates = Jinja2Templates(directory="templates")
-advert_router = APIRouter()
-
+advert_router = APIRouter(prefix="/api/v0_1/adverts")
+prefstr = "/api/v0_1/main"
 
 @advert_router.get("/profile/create_advert", response_class=HTMLResponse)
 async def create_advert_form(request: Request, locator: ServiceLocator = Depends(get_locator)):
     if not request.state.user:
-        return RedirectResponse(url="/login", status_code=303)
+        return RedirectResponse(url=prefstr+"/login", status_code=303)
 
     categories = await locator.category_service().get_all()
     return templates.TemplateResponse(
@@ -32,7 +32,7 @@ async def create_advert(
         locator: ServiceLocator = Depends(get_locator)
 ):
     if not request.state.user:
-        return RedirectResponse(url="/login", status_code=303)
+        return RedirectResponse(url=prefstr+"/login", status_code=303)
 
     try:
         advert_service = locator.advert_service()
@@ -54,7 +54,7 @@ async def create_advert(
         # Создание объявления через сервис
         await advert_service.create_advert(advert_obj)
 
-        return RedirectResponse(url="/", status_code=303)
+        return RedirectResponse(url=prefstr, status_code=303)
     except Exception as e:
         # При ошибке повторно показываем форму
         categories = await locator.category_service().get_all()
