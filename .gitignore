@@ -1,1 +1,4 @@
+src/clickhouse_data
+src/allure-results
+src/allure-report
 frontend/node_modules
