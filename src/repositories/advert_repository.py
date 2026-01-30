@@ -19,6 +19,9 @@ class AdvertsRepository(IAdvertRepository):
             row = result.mappings().first()
             print(row)
             await self.session.commit()
+
+            if row is None:
+                raise ValueError("Failed to create advert - no data returned")
             return Advert(**row)
         except IntegrityError:
             await self.session.rollback()

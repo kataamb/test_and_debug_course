@@ -4,18 +4,18 @@ from uuid import UUID
 
 
 class UserRegister(BaseModel):
-    username: str = Field(..., example="john_doe")
-    email: str = Field(..., example="john@example.com")
+    username: str = Field(default=..., examples=["john_doe"])
+    email: str = Field(examples=["john@example.com"])
 
-    full_name: str = Field(...,  example="John Doe")
-    phone: Optional[str] = Field(None, example="+1234567890")
-    password: str = Field(..., example="123")
-    rep_password: str = Field(..., example="123")
+    full_name: str = Field( examples=["John Doe"])
+    phone: Optional[str] = Field(None, examples=["+1234567890"])
+    password: str = Field(examples=["123"])
+    rep_password: str = Field(examples=["123"])
 
 
 class UserLogin(BaseModel):
-    email: str = Field(..., example="edward23@yahoo.com")
-    password: str = Field(..., example="123")
+    email: str = Field(examples=["edward23@yahoo.com"])
+    password: str = Field(examples=["123"])
 
 
 class UserResponse(BaseModel):

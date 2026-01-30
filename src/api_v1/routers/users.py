@@ -76,12 +76,18 @@ async def register_user(
 
         # Временно возвращаем заглушку - нужно адаптировать твой сервис
         # чтобы он возвращал созданного пользователя
+        if created_user is None:
+            from api_v1.errors.errors import ValidationError
+            raise ValidationError(
+                message="Registration failed - user not created",
+                details=["Service returned None"]
+            )
+
         return UserResponse(
             id=created_user.id,
-            username=created_user.nickname,  # ⚠️ используем nickname как username
+            username=created_user.nickname,  # используем nickname как username
             email=created_user.email,
-            nickname=created_user.nickname,
-            full_name=created_user.fio,  # ⚠️ используем fio как full_name
+            full_name=created_user.fio,  # используем fio как full_name
             phone=created_user.phone_number,
         )
 

@@ -9,20 +9,21 @@ class AdvertCreateDTO(BaseModel):
     content: str
     description: str
     price: int
-    id_category: UUID = Field(None, example="bd29f255-50ab-4967-bc77-475a5fbe7952")# UUID  # Оставляем UUID как в твоей БД
+    id_category: UUID = Field(examples=["bd29f255-50ab-4967-bc77-475a5fbe7952"])# UUID  # Оставляем UUID как в твоей БД
     #category: str = Field(None, example = "Транспорт")
 
+
 class AdvertUpdateFullDTO(BaseModel):
-    content: str = None
-    description: str = None
-    price: int = None
-    id_category: UUID = Field(None, example="bd29f255-50ab-4967-bc77-475a5fbe7952")
+    content: str
+    description: str
+    price: int
+    id_category: UUID = Field(examples=["bd29f255-50ab-4967-bc77-475a5fbe7952"])
 
 class AdvertUpdatePartialDTO(BaseModel):
     content: Optional[str] = None
     description: Optional[str] = None
     price: Optional[int] = None
-    id_category: Optional[UUID] = Field(None, example="bd29f255-50ab-4967-bc77-475a5fbe7952")
+    id_category: Optional[UUID] = Field(None, examples=["bd29f255-50ab-4967-bc77-475a5fbe7952"])
     #category: Optional[str] = Field(None, example="Транспорт")
 
 

@@ -7,6 +7,8 @@ from controllers.user_controller import UserController
 from controllers.deals_controller import DealsController
 from controllers.likes_controller import LikesController
 
+from uuid import UUID
+
 advert_router = APIRouter()
 main_router = APIRouter()
 user_router = APIRouter()
@@ -22,6 +24,7 @@ async def create_advert_form(
     controller = AdvertController(locator)
     return await controller.create_advert_form(request)
 
+'''
 @advert_router.post("/profile/create_advert")
 async def create_advert(
     request: Request,
@@ -29,6 +32,7 @@ async def create_advert(
 ):
     controller = AdvertController(locator)
     return await controller.create_advert(request)
+'''
 
 # Main routes
 @main_router.get("/")
@@ -42,7 +46,7 @@ async def index(
 @main_router.get("/category/{category_id}")
 async def adverts_by_category(
     request: Request,
-    category_id: int,
+    category_id: UUID,
     locator: ServiceLocator = Depends(get_locator)
 ):
     controller = MainController(locator)
@@ -110,7 +114,7 @@ async def logout(
 @deals_router.post("/deal_create/{item_id}")
 async def create_deal(
     request: Request,
-    item_id: int,
+    item_id: UUID,
     locator: ServiceLocator = Depends(get_locator)
 ):
     controller = DealsController(locator)
@@ -120,7 +124,7 @@ async def create_deal(
 @likes_router.post("/like/{item_id}")
 async def add_like(
     request: Request,
-    item_id: int,
+    item_id: UUID,
     locator: ServiceLocator = Depends(get_locator)
 ):
     controller = LikesController(locator)
@@ -129,7 +133,7 @@ async def add_like(
 @likes_router.post("/unlike/{item_id}")
 async def remove_like(
     request: Request,
-    item_id: int,
+    item_id: UUID,
     locator: ServiceLocator = Depends(get_locator)
 ):
     controller = LikesController(locator)

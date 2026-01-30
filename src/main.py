@@ -26,6 +26,10 @@ import os
 import sys
 from pathlib import Path
 
+
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.openapi.utils import get_openapi
+
 # ----------------- Logging -----------------
 def setup_logging():
     config_path = os.getenv('LOG_CONFIG', 'log_config.json')
@@ -124,8 +128,7 @@ app.include_router(api_v1_likes_router)
 app.include_router(api_v1_deals_router)
 
 # ----------------- Swagger -----------------
-from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.openapi.utils import get_openapi
+
 
 @app.get("/api/v0_1/docs", include_in_schema=False)
 async def v0_swagger():

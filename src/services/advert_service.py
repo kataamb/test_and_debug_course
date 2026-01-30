@@ -19,7 +19,7 @@ class IAdvertService(ABC):
     async def get_advert_by_user(self, user_id: UUID) -> List[Advert]: ...
 
     @abstractmethod
-    async def is_created(self, user_id: int, advert_id: UUID) -> bool: ...
+    async def is_created(self, user_id: UUID, advert_id: UUID) -> bool: ...
 
     @abstractmethod
     async def get_adverts_by_key_word(self, key_word: str) -> List[Advert]: ...
@@ -34,7 +34,7 @@ class IAdvertService(ABC):
     async def update_advert(self, advert_id: UUID, advert_data: Advert) -> Advert: ...
 
     @abstractmethod
-    async def partial_update_advert(self, advert_id: UUID, advert_data: Advert) -> Advert: ...
+    async def partial_update_advert(self, advert_id: UUID, advert_data: AdvertUpdatePartialDTO) -> Advert: ...
 
     @abstractmethod
     async def delete_advert(self, advert_id: UUID, user_id: UUID) -> None: ...
@@ -104,10 +104,10 @@ class AdvertService(IAdvertService):
             update_dict["description"] = advert_data.description
 
         if advert_data.price is not None:
-            update_dict["price"] = advert_data.price
+            update_dict["price"] = str(advert_data.price)
 
         if advert_data.id_category is not None:
-            update_dict["id_category"] = advert_data.id_category
+            update_dict["id_category"] = str(advert_data.id_category)
 
         return await self.repo.partial_update_advert(advert_id, update_dict)
 

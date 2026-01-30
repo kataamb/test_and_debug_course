@@ -60,7 +60,7 @@ class SimpleDBHelper:
                     "name": "Тестовая категория"
                 }
             )
-        except:
+        except Exception:
             pass  # Если таблицы нет, просто используем UUID
         
         # 4. Создаем объявление

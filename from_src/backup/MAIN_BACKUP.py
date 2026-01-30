@@ -26,14 +26,13 @@ import json
 import os
 import sys
 from pathlib import Path
-import yaml
 
 from fastapi.middleware.cors import CORSMiddleware
 
 
 
 def setup_logging():
-    config_path = os.getenv('LOG_CONFIG', 'log_config.json')
+    config_path = os.getenv('LOG_CONFIG', '../log_config.json')
 
     # Проверяем доступность файла конфигурации
     if not os.path.exists(config_path):

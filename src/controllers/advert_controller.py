@@ -31,6 +31,7 @@ class AdvertController:
             }
         )
 
+    '''
     async def create_advert(self, request: Request) -> HTMLResponse | RedirectResponse:
         if not request.state.user:
             return RedirectResponse(url="/login", status_code=303)
@@ -84,6 +85,7 @@ class AdvertController:
                     "error": str(e)
                 }
             )
+    '''
 
     async def _create_advert_dto(self, advert: Advert, user_id: UUID | None = None) -> AdvertWithCategoryDTO:
         dto = AdvertWithCategoryDTO(**advert.model_dump())

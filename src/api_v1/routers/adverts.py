@@ -17,7 +17,7 @@ from api_v1.errors.errors import (
     ValidationError, DatabaseError,
     AuthorizationError
 )
-from core.create_jwt import *
+from core.create_jwt import get_current_user, get_optional_user
 
 
 from service_locator import get_locator, ServiceLocator
@@ -55,6 +55,21 @@ async def get_all_adverts(
             # Получаем дополнительные данные для DTO
             #category_name = await locator.category_service().get_name_by_id(advert.id_category)
 
+            is_created = False  # по умолчанию false
+            if current_user:
+                is_created = await locator.advert_service().is_created(current_user["id"], advert.id)
+
+            is_liked = False
+            if current_user:
+                is_liked = await locator.liked_service().is_liked(current_user["id"],   advert.id)
+
+            is_bought_by_current = False
+            if current_user:
+                is_bought_by_current = await locator.deals_service().is_in_deals(
+                    current_user["id"],
+                    advert.id)
+
+
             advert_dto = AdvertResponseDTO(
                 id=advert.id,
                 content=advert.content,  # content как title
@@ -65,14 +80,10 @@ async def get_all_adverts(
                 date_created=advert.date_created,  # date_created как created_at
                 category_name=await locator.category_service().get_name_by_id(advert.id_category),
                 seller_name='',
-                is_created=await locator.advert_service().is_created(current_user["id"] if current_user else None,
-                                                                     advert.id),
-                is_liked=await locator.liked_service().is_liked(current_user["id"] if current_user else None,
-                                                                advert.id),
+                is_created=is_created,
+                is_liked=is_liked,
                 is_bought=await locator.deals_service().is_bought(advert.id),
-                is_bought_by_current=await locator.deals_service().is_in_deals(
-                    current_user["id"] if current_user else None,
-                    advert.id),
+                is_bought_by_current=is_bought_by_current,
             )
             items.append(advert_dto)
 
@@ -95,8 +106,9 @@ async def create_advert(
     try:
         # Проверяем существование категории
         advert_service = locator.advert_service()
-        deals_service = locator.deals_service()
+        locator.deals_service()
         advert_obj = Advert(
+                id = UUID(int=0),
                 content=advert_data.content,
                 description=advert_data.description,
                 id_category=advert_data.id_category,
@@ -105,6 +117,24 @@ async def create_advert(
             )
         advert = await advert_service.create_advert(advert_obj)
         print(advert)
+
+        if advert is None:
+            from api_v1.errors.errors import DatabaseError
+            raise DatabaseError("Failed to create advert - service returned None")
+
+        is_created = False  # по умолчанию false
+        if current_user:
+            is_created = await locator.advert_service().is_created(current_user["id"], advert.id)
+
+        is_liked = False
+        if current_user:
+            is_liked = await locator.liked_service().is_liked(current_user["id"], advert.id)
+
+        is_bought_by_current = False
+        if current_user:
+            is_bought_by_current = await locator.deals_service().is_in_deals(
+                current_user["id"],
+                advert.id)
 
         advert_dto = AdvertResponseDTO(
             id=advert.id,
@@ -116,13 +146,10 @@ async def create_advert(
             date_created=advert.date_created,  # date_created как created_at
             category_name=await locator.category_service().get_name_by_id(advert.id_category),
             seller_name='',
-            is_created=await locator.advert_service().is_created(current_user["id"] if current_user else None,
-                                                                 advert.id),
-            is_liked=await locator.liked_service().is_liked(current_user["id"] if current_user else None,
-                                                            advert.id),
+            is_created=is_created,
+            is_liked= is_liked,
             is_bought=await locator.deals_service().is_bought(advert.id),
-            is_bought_by_current=await locator.deals_service().is_in_deals(current_user["id"] if current_user else None,
-                                                                           advert.id),
+            is_bought_by_current=is_bought_by_current,
         )
 
         return advert_dto
@@ -154,14 +181,32 @@ async def get_search_adverts(
     """
     try:
         advert_service = locator.advert_service()
+        if not search_data.query:
+            search_data.query = ''
+        if not search_data.id_category:
+            search_data.id_category = UUID(int=0)
 
         adverts = await advert_service.get_adverts_by_category_and_keyword(search_data.query, search_data.id_category)
-        print(search_data.query == True, search_data.id_category == True)
+        print(search_data.query, search_data.id_category)
 
         items = []
         for advert in adverts:
             # Получаем дополнительные данные для DTO
             # category_name = await locator.category_service().get_name_by_id(advert.id_category)
+
+            is_created = False  # по умолчанию false
+            if current_user:
+                is_created = await locator.advert_service().is_created(current_user["id"], advert.id)
+
+            is_liked = False
+            if current_user:
+                is_liked = await locator.liked_service().is_liked(current_user["id"], advert.id)
+
+            is_bought_by_current = False
+            if current_user:
+                is_bought_by_current = await locator.deals_service().is_in_deals(
+                    current_user["id"],
+                    advert.id)
 
             advert_dto = AdvertResponseDTO(
                 id=advert.id,
@@ -173,16 +218,13 @@ async def get_search_adverts(
                 date_created=advert.date_created,  # date_created как created_at
                 category_name=await locator.category_service().get_name_by_id(advert.id_category),
                 seller_name='',
-                is_created=await locator.advert_service().is_created(current_user["id"] if current_user else None,
-                                                                     advert.id),
-                is_liked=await locator.liked_service().is_liked(current_user["id"] if current_user else None,
-                                                                advert.id),
+                is_created=is_created,
+                is_liked=is_liked,
                 is_bought=await locator.deals_service().is_bought(advert.id),
-                is_bought_by_current=await locator.deals_service().is_in_deals(
-                    current_user["id"] if current_user else None,
-                    advert.id),
+                is_bought_by_current=is_bought_by_current,
             )
-            items.append(advert_dto)
+
+        items.append(advert_dto)
 
         return AdvertListResponseDTO(items=items)
 
@@ -227,6 +269,18 @@ async def get_my_adverts(
         items = []
         for advert in adverts:
             # Получаем дополнительные данные для DTO
+            if current_user:
+                await locator.advert_service().is_created(current_user["id"], advert.id)
+
+            is_liked = False
+            if current_user:
+                is_liked = await locator.liked_service().is_liked(current_user["id"], advert.id)
+
+            is_bought_by_current = False
+            if current_user:
+                is_bought_by_current = await locator.deals_service().is_in_deals(
+                    current_user["id"],
+                    advert.id)
 
             advert_dto = AdvertResponseDTO(
                 id=advert.id,
@@ -239,10 +293,8 @@ async def get_my_adverts(
                 category_name=await locator.category_service().get_name_by_id(advert.id_category),
                 seller_name='',
                 is_created = True,
-                is_liked=await locator.liked_service().is_liked(current_user["id"] if current_user else None,
-                                                                advert.id),
-                is_bought=await locator.deals_service().is_bought(advert.id),
-                is_bought_by_current=await locator.deals_service().is_in_deals(current_user["id"] if current_user else None, advert.id),
+                is_liked=is_liked,
+                is_bought_by_current=is_bought_by_current,
             )
             items.append(advert_dto)
 
@@ -360,6 +412,20 @@ async def get_advert(
         if not advert:
             raise AdvertNotFoundError()
 
+        is_created = False
+        if current_user:
+            is_created = await locator.advert_service().is_created(current_user["id"], advert.id)
+
+        is_liked = False
+        if current_user:
+            is_liked = await locator.liked_service().is_liked(current_user["id"], advert.id)
+
+        is_bought_by_current = False
+        if current_user:
+            is_bought_by_current = await locator.deals_service().is_in_deals(
+                current_user["id"],
+                advert.id)
+
         # Собираем DTO с дополнительными полями
         advert_dto = AdvertResponseDTO(
             id=advert.id,
@@ -371,16 +437,10 @@ async def get_advert(
             date_created=advert.date_created,
             category_name=await locator.category_service().get_name_by_id(advert.id_category),
             seller_name='',  # TODO: получить имя продавца
-            is_created=await locator.advert_service().is_created(
-                current_user["id"] if current_user else None, advert.id
-            ),
-            is_liked=await locator.liked_service().is_liked(
-                current_user["id"] if current_user else None, advert.id
-            ),
+            is_created=is_created,
+            is_liked=is_liked,
             is_bought=await locator.deals_service().is_bought(advert.id),
-            is_bought_by_current=await locator.deals_service().is_in_deals(
-                current_user["id"] if current_user else None, advert.id
-            ),
+            is_bought_by_current=is_bought_by_current,
         )
         return advert_dto
 
@@ -410,6 +470,7 @@ async def update_advert_full(
 
 
         advert_obj = Advert(
+            id = advert_id,
             content=advert_data.content,  # маппинг title → content
             description=advert_data.description,
             price=advert_data.price,

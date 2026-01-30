@@ -24,6 +24,7 @@ dependencies = [
     "clickhouse-connect (>=0.9.1,<0.10.0)",
     "tasks (>=2.8.0,<3.0.0)",
     "pyyaml (>=6.0.3,<7.0.0)",
+    "allure-pytest (>=2.15.3,<3.0.0)",
 ]
 
 

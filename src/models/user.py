@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from uuid import UUID
 
 class User(BaseModel):
-    id: UUID | None = None
+    id: UUID
     nickname: str
     fio: str
     email: str

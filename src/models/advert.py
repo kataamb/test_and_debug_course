@@ -5,7 +5,7 @@ from pydantic import ConfigDict
 
 
 class Advert(BaseModel):
-    id: UUID | None = None
+    id: UUID 
     content: str
     description: str
     id_category: UUID

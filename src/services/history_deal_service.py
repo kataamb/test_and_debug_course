@@ -1,12 +1,12 @@
 from abstract_repositories.ihistory_deal_repository import IHistoryDealRepository
 from models.history_deal import HistoryDeal
-from typing import List
+from typing import List, Optional
 
 class HistoryDealService:
     def __init__(self, repo: IHistoryDealRepository):
         self.repo = repo
 
-    async def create(self, history_deal: HistoryDeal) -> HistoryDeal:
+    async def create(self, history_deal: HistoryDeal) -> Optional[HistoryDeal]:
         return await self.repo.create(history_deal)
 
     async def get_all(self) -> List[HistoryDeal]:

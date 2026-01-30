@@ -1,14 +1,8 @@
-from fastapi import APIRouter, Request, Depends
-from controllers.history_deal_controller import HistoryDealController
-from services.history_deal_service import HistoryDealService
-from repositories.history_deal_repository import HistoryDealRepository
-from i_sql_builders.ihistory_deal_sql_builder import IHistoryDealSqlBuilder
-from sql_builders.history_deal_sql_builder import HistoryDealSqlBuilder
-from core.db import get_session
+from fastapi import APIRouter
 
 router_history = APIRouter()
 
-
+'''
 async def get_controller() -> HistoryDealController:
     # 1. Получаем асинхронную сессию БД
     session = await get_session(role="admin")
@@ -40,3 +34,5 @@ async def history_all(request: Request, ctrl: HistoryDealController = Depends(ge
 @router_history.get("/history/my")
 async def history_my(request: Request, ctrl: HistoryDealController = Depends(get_controller)):
     return await ctrl.list_user(request)
+
+'''

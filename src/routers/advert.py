@@ -44,6 +44,7 @@ async def create_advert(
         id_category = UUID(str(form_data.get("id_category")))
 
         advert_obj = Advert(
+            id = UUID(int=0),
             content=content,
             description=description,
             id_category=id_category,

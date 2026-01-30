@@ -1,5 +1,5 @@
 from fastapi import Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from services.history_deal_service import  HistoryDealService
 
@@ -16,6 +16,7 @@ class HistoryDealController:
             {"request": request, "user": request.state.user, "deals": deals},
         )
 
+    '''
     async def list_user(self, request: Request) -> HTMLResponse:
         if not request.state.user:
             return RedirectResponse(url="/login", status_code=303)
@@ -24,3 +25,4 @@ class HistoryDealController:
             "history_deals_user.html",
             {"request": request, "user": request.state.user, "deals": deals},
         )
+    '''

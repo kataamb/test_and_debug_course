@@ -19,13 +19,26 @@ async def get_current_user(
             SECRET_KEY, 
             algorithms=[ALGORITHM]
         )
-        user_id: str = payload.get("sub")
+
+        user_id_raw = payload.get("sub")
+
+        if user_id_raw is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials: missing subject"
+            )
+
+        #user_id: str = payload.get("sub")
+        user_id = str(user_id_raw)
+
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials"
             )
+
         return {"id": user_id, "username": payload.get("username")}
+
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

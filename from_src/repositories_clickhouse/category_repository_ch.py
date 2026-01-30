@@ -1,6 +1,6 @@
 # repositories/category_repository.py (для ClickHouse версии)
 from core.db_utils import execute_query
-from models.category import *
+
 from typing import List
 from clickhouse_connect.driver import AsyncClient
 from abstract_repositories.icategory_repository import ICategoryRepository

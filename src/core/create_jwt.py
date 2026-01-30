@@ -2,6 +2,11 @@ import jwt
 from datetime import datetime, timedelta
 from typing import Any
 
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from uuid import UUID
+from typing import Optional
+
 SECRET_KEY = "supersecret"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -26,10 +31,7 @@ class JWTManager:
 ##########################################################################################
 
 # файл: routes/api_v1/advert_routes.py
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from uuid import UUID
-from typing import Optional
+
 
 
 

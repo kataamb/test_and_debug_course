@@ -1,9 +1,11 @@
 # core/db_utils.py
-from typing import Union, Any
+from typing import Union, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from clickhouse_connect.driver import AsyncClient
 
-async def execute_query(session: Union[AsyncSession, AsyncClient], query: Any, params: dict = None) -> Any:
+async def execute_query(
+        session: Union[AsyncSession, AsyncClient],
+        query: Any, params: Optional[dict ]) -> Any:
     """Универсальная функция выполнения запроса для обеих БД"""
     if hasattr(session, 'query'):  # ClickHouse
         return await session.query(str(query), parameters=params)

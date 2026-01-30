@@ -16,6 +16,10 @@ class HistoryDealRepository(IHistoryDealRepository):
             result = await self.session.execute(sql, params)
             row = result.mappings().first()
             await self.session.commit()
+
+            if row is None:
+                raise ValueError("Failed to create history deal - no data returned")
+
             return HistoryDeal(**row)
         except SQLAlchemyError:
             await self.session.rollback()

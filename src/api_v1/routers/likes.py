@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 
-from api_v1.dto.like_dto import *
+from api_v1.dto.like_dto import LikeResponseDTO
 from api_v1.errors.errors import (
     AdvertNotFoundError, LikeAlreadyExistsError, LikeNotFoundError,
     AuthorizationError, DatabaseError
@@ -56,7 +56,12 @@ async def add_like(
         # Добавляем лайк
 
         liked = await likes_service.add_to_liked(advert_id, current_user["id"])
-        return LikeListResponseDTO(
+
+        # Проверяем существование объявления
+        if not liked:
+            raise LikeNotFoundError()
+
+        return LikeResponseDTO(
             id = liked.id,
             advert_id = liked.id_advert,
             customer_id = liked.id_customer,
