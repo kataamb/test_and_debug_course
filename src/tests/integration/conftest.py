@@ -9,6 +9,12 @@ import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy import text
 
+import sys
+import pysqlite3
+
+# Монки-патчим sqlite3
+#sys.modules['sqlite3'] = pysqlite3
+
 SRC_PATH = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(SRC_PATH))
 

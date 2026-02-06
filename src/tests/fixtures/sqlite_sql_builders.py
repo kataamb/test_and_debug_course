@@ -10,6 +10,8 @@ from i_sql_builders.icategory_sql_builder import ICategorySqlBuilder
 from i_sql_builders.iuser_sql_builder import IUserSqlBuilder
 from i_sql_builders.sql_types.sql_types import TextAndParams, SqlParams
 
+from uuid import UUID, uuid4
+
 
 class SQLiteAdvertSqlBuilder(IAdvertSqlBuilder):
     """SQLite-совместимый builder для adverts (без схемы adv_uuid)"""
@@ -86,8 +88,7 @@ class SQLiteAdvertSqlBuilder(IAdvertSqlBuilder):
         sql = text("""
             UPDATE adverts 
             SET content = :content, 
-                description = :description, 
-                id_category = :id_category, 
+                description = :description,                 id_category = :id_category, 
                 price = :price
             WHERE id = :advert_id
             RETURNING id, content, description, id_category, price, id_seller, date_created
@@ -152,38 +153,49 @@ class SQLiteCategorySqlBuilder(ICategorySqlBuilder):
 
 
 class SQLiteUserSqlBuilder(IUserSqlBuilder):
-    """SQLite-совместимый builder для users"""
+    """Builder для SQLite 3.51.1 с RETURNING поддержкой"""
 
     def create_user(self, user_data: dict) -> TextAndParams:
-        # pysqlite3 поддерживает RETURNING (SQLite 3.35.0+)
+        # Генерируем UUID если его нет в данных
+        user_data = user_data.copy()
+
+        if "id" not in user_data or not user_data["id"]:
+            user_id = uuid4()
+            user_data["id"] = str(user_id)
+
+        # Используем RETURNING!
         sql = text("""
             INSERT INTO profiles (id, nickname, fio, email, phone_number, password)
             VALUES (:id, :nickname, :fio, :email, :phone_number, :password)
             RETURNING id, nickname, fio, email, phone_number, password
         """)
+
         params: SqlParams = {
-            "id": str(user_data.get("id", "")),
+            "id": user_data["id"],
             "nickname": user_data["nickname"],
             "fio": user_data["fio"],
             "email": user_data["email"],
-            "phone_number": user_data["phone_number"],
+            "phone_number": user_data.get("phone_number", ""),
             "password": user_data["password"]
         }
+
         return sql, params
 
     def create_customer(self, profile_id: UUID, rating: int = 0) -> TextAndParams:
+        customer_id = uuid4()
         sql = text("""
             INSERT INTO customers (id, profile_id, rating)
             VALUES (:id, :profile_id, :rating)
         """)
-        return sql, {"id": str(UUID(int=0)), "profile_id": str(profile_id), "rating": rating}
+        return sql, {"id": str(customer_id), "profile_id": str(profile_id), "rating": rating}
 
     def create_seller(self, profile_id: UUID, rating: int = 0) -> TextAndParams:
+        seller_id = uuid4()
         sql = text("""
             INSERT INTO sellers (id, profile_id, rating)
             VALUES (:id, :profile_id, :rating)
         """)
-        return sql, {"id": str(UUID(int=0)), "profile_id": str(profile_id), "rating": rating}
+        return sql, {"id": str(seller_id), "profile_id": str(profile_id), "rating": rating}
 
     def delete_customer(self, profile_id: UUID) -> TextAndParams:
         return text("DELETE FROM customers WHERE profile_id = :id"), {"id": str(profile_id)}
