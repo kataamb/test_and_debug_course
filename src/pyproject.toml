@@ -25,6 +25,7 @@ dependencies = [
     "tasks (>=2.8.0,<3.0.0)",
     "pyyaml (>=6.0.3,<7.0.0)",
     "allure-pytest (>=2.15.3,<3.0.0)",
+    "pysqlite3-binary (>=0.5.4.post2,<0.6.0)",
 ]
 
 
