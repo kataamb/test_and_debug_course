@@ -29,7 +29,7 @@ jobs:
 
       - name: Run mypy
         working-directory: ./src  # ← ВАЖНО!
-        run: run mypy --namespace-packages --explicit-package-bases .
+        run: poetry run mypy --namespace-packages --explicit-package-bases .
 
   unit-tests:
     runs-on: ubuntu-latest
