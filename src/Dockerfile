@@ -28,6 +28,7 @@ COPY ./tests ./tests
 COPY ./auth ./auth
 COPY config.json log_config.json main.py service_locator.py ./
 COPY ./api_v1/ ./api_v1
+COPY ./api_v2/ ./api_v2
 COPY ./schemas ./schemas
 
 

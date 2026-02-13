@@ -1,216 +1,123 @@
-# tests/integration/conftest.py
-"""Конфигурация для интеграционных тестов с реальной SQLite БД"""
-import sys
-from pathlib import Path
-import pytest
-import tempfile
 import os
-import asyncio
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy import text
-
-import sys
-import pysqlite3
-
-# Монки-патчим sqlite3
-#sys.modules['sqlite3'] = pysqlite3
-
-SRC_PATH = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(SRC_PATH))
+import uuid
+import subprocess
+from typing import AsyncGenerator
 
 
-@pytest.fixture(scope="function")
-async def integration_db_engine():
-    """Создает SQLite БД для каждого теста"""
-    # Создаем временный файл БД для каждого теста
-    db_fd, db_path = tempfile.mkstemp(suffix='.db')
-    os.close(db_fd)
+import asyncpg # type: ignore[import-untyped]
+import pytest
+import pytest_asyncio
+from asgi_lifespan import LifespanManager
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-    # ИСПОЛЬЗУЕМ aiosqlite вместо pysqlite
-    database_url = f"sqlite+aiosqlite:///{db_path}"
-    engine = create_async_engine(
-        database_url,
-        echo=False,
-        connect_args={"check_same_thread": False}
-    )
+from fastapi import FastAPI
 
-    # Создаем таблицы
-    async with engine.begin() as conn:
-        # Создаем таблицу profiles
-        await conn.execute(text("""
-            CREATE TABLE profiles (
-                id TEXT PRIMARY KEY,
-                nickname TEXT NOT NULL,
-                fio TEXT NOT NULL,
-                email TEXT UNIQUE NOT NULL,
-                phone_number TEXT,
-                password TEXT NOT NULL
-            )
-        """))
+# ============== ИМПОРТЫ ДЛЯ V2 ==============
+from api_v2.routers.adverts import api_v2_router_adverts
+from api_v2.routers.categories import api_v2_router_categories
+from api_v2.dependencies import get_db_session
 
-        # Создаем таблицу customers
-        await conn.execute(text("""
-            CREATE TABLE customers (
-                id TEXT PRIMARY KEY,
-                profile_id TEXT NOT NULL,
-                rating INTEGER DEFAULT 0,
-                FOREIGN KEY (profile_id) REFERENCES profiles(id)
-            )
-        """))
+# ============================================
 
-        # Создаем таблицу sellers
-        await conn.execute(text("""
-            CREATE TABLE sellers (
-                id TEXT PRIMARY KEY,
-                profile_id TEXT NOT NULL,
-                rating INTEGER DEFAULT 0,
-                FOREIGN KEY (profile_id) REFERENCES profiles(id)
-            )
-        """))
+app = FastAPI()
 
-        # Создаем таблицу categories
-        await conn.execute(text("""
-            CREATE TABLE categories (
-                id TEXT PRIMARY KEY,
-                name TEXT NOT NULL
-            )
-        """))
+# ============== ПОДКЛЮЧАЕМ V2 РОУТЕРЫ ==============
+app.include_router(api_v2_router_adverts, prefix="/api/v2")
+app.include_router(api_v2_router_categories, prefix="/api/v2")
+# ===================================================
 
-        # Создаем таблицу adverts
-        await conn.execute(text("""
-            CREATE TABLE adverts (
-                id TEXT PRIMARY KEY,
-                content TEXT NOT NULL,
-                description TEXT,
-                id_category TEXT NOT NULL,
-                price INTEGER NOT NULL,
-                id_seller TEXT NOT NULL,
-                date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (id_category) REFERENCES categories(id),
-                FOREIGN KEY (id_seller) REFERENCES sellers(id)
-            )
-        """))
-
-    yield engine, db_path
-
-    # Очистка
-    await engine.dispose()
-    if os.path.exists(db_path):
-        os.unlink(db_path)
+# ============== ПЕРЕОПРЕДЕЛЯЕМ DEPENDENCY ДЛЯ ТЕСТОВ ==============
+_test_db_url = None
 
 
-@pytest.fixture
-async def integration_db_session(integration_db_engine):
-    """Создает сессию БД для интеграционного теста"""
-    engine, db_path = integration_db_engine
-    async_session_maker = async_sessionmaker(
-        bind=engine,
-        expire_on_commit=False,
-        class_=AsyncSession
-    )
+def set_test_db_url(url: str):
+    """Устанавливаем URL тестовой БД."""
+    global _test_db_url
+    _test_db_url = url
 
-    async with async_session_maker() as session:
+
+async def override_get_db_session():
+    """Тестовая версия get_db_session - подключается к тестовой БД."""
+    global _test_db_url
+    if _test_db_url is None:
+        raise RuntimeError("test_db_url not set! Call set_test_db_url first.")
+
+    # Создаем engine для тестовой БД
+    async_engine_url = _test_db_url.replace("postgresql://", "postgresql+asyncpg://")
+    engine = create_async_engine(async_engine_url, echo=False)
+    async_session = async_sessionmaker(engine, expire_on_commit=False)
+
+    session = async_session()
+    session._test_engine = engine
+
+    try:
         yield session
-        # Очищаем все данные после теста
-        try:
-            await session.execute(text("DELETE FROM adverts"))
-            await session.execute(text("DELETE FROM sellers"))
-            await session.execute(text("DELETE FROM customers"))
-            await session.execute(text("DELETE FROM profiles"))
-            await session.execute(text("DELETE FROM categories"))
-            await session.commit()
-        except:
-            await session.rollback()
+    finally:
+        await session.close()
+        await engine.dispose()
 
 
-@pytest.fixture
-async def integration_test_data(integration_db_session):
-    """Создает тестовые данные для каждого интеграционного теста"""
-    from uuid import UUID
-    from tests.resources.category_test_data.mother_object_category import MotherCategory
-    from tests.resources.user_test_data.mother_object_user import MotherUser
-
-    # Создаем категорию
-    category = MotherCategory.default_category()
-    await integration_db_session.execute(
-        text("INSERT INTO categories (id, name) VALUES (:id, :name)"),
-        {"id": str(category.id), "name": category.name}
-    )
-
-    # Создаем пользователя
-    user = MotherUser.default_user()
-    await integration_db_session.execute(
-        text("""
-            INSERT INTO profiles (id, nickname, fio, email, phone_number, password)
-            VALUES (:id, :nickname, :fio, :email, :phone_number, :password)
-        """),
-        {
-            "id": str(user.id),
-            "nickname": user.nickname,
-            "fio": user.fio,
-            "email": user.email,
-            "phone_number": user.phone_number,
-            "password": user.password
-        }
-    )
-
-    # Создаем seller
-    seller_id = UUID(int=100)
-    await integration_db_session.execute(
-        text("INSERT INTO sellers (id, profile_id, rating) VALUES (:id, :profile_id, :rating)"),
-        {"id": str(seller_id), "profile_id": str(user.id), "rating": 0}
-    )
-
-    await integration_db_session.commit()
-
-    return {
-        "category": category,
-        "user": user,
-        "seller_id": seller_id
-    }
+# ПОДМЕНЯЕМ ЗАВИСИМОСТЬ!
+app.dependency_overrides[get_db_session] = override_get_db_session
 
 
-@pytest.fixture
-async def integration_service_locator(integration_db_session, integration_test_data):
-    """Создает ServiceLocator для интеграционных тестов"""
-    from service_locator import build_service_locator
-    from tests.fixtures.sqlite_sql_builders import (
-        SQLiteAdvertSqlBuilder,
-        SQLiteCategorySqlBuilder,
-        SQLiteUserSqlBuilder
-    )
-    from repositories.advert_repository import AdvertsRepository
-    from repositories.category_repository import CategoryRepository
-    from repositories.user_repository import UserRepository
-    from services.advert_service import AdvertService
-    from services.category_service import CategoryService
-    from services.auth_service import AuthService
-    from service_locator import ServiceLocator, Repositories, Services
+# ===================================================================
 
-    # Создаем репозитории с SQLite builders
-    adverts_repo = AdvertsRepository(integration_db_session, SQLiteAdvertSqlBuilder())
-    categories_repo = CategoryRepository(integration_db_session, SQLiteCategorySqlBuilder())
-    users_repo = UserRepository(integration_db_session, SQLiteUserSqlBuilder())
 
-    # Создаем сервисы
-    adverts_service = AdvertService(adverts_repo)
-    categories_service = CategoryService(categories_repo)
-    auth_service = AuthService(users_repo)
+@pytest.fixture(scope="session")
+def db_url() -> str:
+    """URL для подключения к контейнеру Postgres."""
+    return "postgresql://postgres:1234@localhost:5439/postgres"
 
-    return ServiceLocator(
-        session=integration_db_session,
-        repositories=Repositories(
-            adverts=adverts_repo,
-            categories=categories_repo,
-            users=users_repo,
-            deals=None,
-            liked=None
-        ),
-        services=Services(
-            adverts=adverts_service,
-            categories=categories_service,
-            deals=None,
-            liked=None,
-            auth=auth_service
-        )
-    )
+
+@pytest.fixture(scope="session")
+def unique_db_name() -> str:
+    """Уникальное имя БД для параллельных запусков."""
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "master")
+    return f"test_db_{worker_id}_{uuid.uuid4().hex[:8]}"
+
+
+@pytest_asyncio.fixture(scope="session")
+async def test_database(db_url: str, unique_db_name: str) -> AsyncGenerator[str, None]:
+    """Создаём уникальную тестовую БД."""
+
+    # 1. Создаём БД
+    conn = await asyncpg.connect(db_url)
+    await conn.execute(f"CREATE DATABASE {unique_db_name}")
+    await conn.close()
+
+    db_url_with_db = f"{db_url.rsplit('/', 1)[0]}/{unique_db_name}"
+
+    # 2. УСТАНАВЛИВАЕМ URL для тестовой сессии!
+    set_test_db_url(db_url_with_db)
+
+    # 3. Создаём таблицы через psql
+    subprocess.run([
+        "psql", db_url_with_db,
+        "-f", "tests/integration/fixtures/create_tables.sql"
+    ], check=True)
+
+    # 4. Загружаем тестовые данные
+    subprocess.run([
+        "psql", db_url_with_db,
+        "-f", "tests/integration/fixtures/test_data.sql"
+    ], check=True)
+
+    yield db_url_with_db
+
+    # 5. Удаляем БД
+    conn = await asyncpg.connect(db_url)
+    await conn.execute(f"DROP DATABASE IF EXISTS {unique_db_name} WITH (FORCE)")
+    await conn.close()
+
+
+@pytest_asyncio.fixture
+async def client() -> AsyncGenerator[AsyncClient, None]:
+    """HTTP клиент для тестов."""
+    async with LifespanManager(app):
+        async with AsyncClient(
+                transport=ASGITransport(app=app),
+                base_url="http://test",
+        ) as ac:
+            yield ac

@@ -1,19 +1,13 @@
 #import factory and mother of adverts
 
-from unittest.mock import Mock
 import pytest
 from services.advert_service import AdvertService
 
 # tests/unit/service/advert_service_classic_test.py
-import pytest
-import asyncio
 from uuid import UUID
-from unittest.mock import AsyncMock, MagicMock
-from services.advert_service import AdvertService
-from models.advert import Advert
+from unittest.mock import AsyncMock
 from api_v1.dto.advert_dto import AdvertUpdatePartialDTO
 from tests.resources.advert_test_data.builder_advert import AdvertBuilder
-from tests.resources.advert_test_data.mother_object_advert import MotherAdvert
 from tests.resources.user_test_data.mother_object_user import MotherUser
 
 

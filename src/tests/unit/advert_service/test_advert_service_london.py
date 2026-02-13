@@ -1,13 +1,10 @@
 # tests/unit/service/advert_service_london_test.py
 import pytest
-import asyncio
 from uuid import UUID
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock
 from services.advert_service import AdvertService
-from models.advert import Advert
 from api_v1.dto.advert_dto import AdvertUpdatePartialDTO
 from tests.resources.advert_test_data.builder_advert import AdvertBuilder
-from tests.resources.advert_test_data.mother_object_advert import MotherAdvert
 
 
 class TestAdvertServiceLondon:

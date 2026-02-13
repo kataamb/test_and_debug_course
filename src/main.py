@@ -17,6 +17,9 @@ from api_v1.routers.users import api_v1_users_router
 from api_v1.routers.likes import api_v1_likes_router
 from api_v1.routers.deals import api_v1_deals_router
 
+from api_v2.routers.adverts import api_v2_router_adverts
+from api_v2.routers.categories import api_v2_router_categories
+
 from core.create_jwt import JWTManager
 
 import logging
@@ -126,6 +129,16 @@ app.include_router(api_v1_categories_router)
 app.include_router(api_v1_users_router)
 app.include_router(api_v1_likes_router)
 app.include_router(api_v1_deals_router)
+
+app.include_router(
+    api_v2_router_adverts,
+    prefix="/api/v2"
+)
+
+app.include_router(
+    api_v2_router_categories,
+    prefix="/api/v2"
+)
 
 # ----------------- Swagger -----------------
 

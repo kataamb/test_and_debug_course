@@ -10,7 +10,7 @@ from i_sql_builders.icategory_sql_builder import ICategorySqlBuilder
 from i_sql_builders.iuser_sql_builder import IUserSqlBuilder
 from i_sql_builders.sql_types.sql_types import TextAndParams, SqlParams
 
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 
 class SQLiteAdvertSqlBuilder(IAdvertSqlBuilder):

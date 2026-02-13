@@ -1,0 +1,15 @@
+FROM python:3.13-slim
+
+# Устанавливаем postgresql-client - КАК У ДРУГА!
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY pyproject.toml poetry.lock ./
+RUN pip install poetry && poetry install
+
+COPY . .
+
+CMD ["poetry", "run", "pytest", "tests/integration/", "-v"]

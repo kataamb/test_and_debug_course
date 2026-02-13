@@ -4,7 +4,6 @@ from uuid import UUID
 from sqlalchemy import text
 from repositories.advert_repository import AdvertsRepository
 from tests.resources.advert_test_data.builder_advert import AdvertBuilder
-from tests.resources.advert_test_data.mother_object_advert import MotherAdvert
 from tests.fixtures.sqlite_sql_builders import SQLiteAdvertSqlBuilder
 
 

@@ -26,6 +26,7 @@ dependencies = [
     "pyyaml (>=6.0.3,<7.0.0)",
     "allure-pytest (>=2.15.3,<3.0.0)",
     "pysqlite3-binary (>=0.5.4.post2,<0.6.0)",
+    "pytest-xdist (>=3.8.0,<4.0.0)",
 ]
 
 
@@ -37,6 +38,9 @@ build-backend = "poetry.core.masonry.api"
 mypy = "^1.17.1"
 ruff = "^0.12.9"
 pytest = "^8.4.1"
+types-python-jose = "^3.5.0.20250531"
+allure-pytest = "^2.15.3"
+allure-python-commons = "^2.15.3"
 
 
 [tool.poetry.group.test.dependencies]
@@ -44,6 +48,7 @@ pytest-random-order = "^1.2.0"
 allure-pytest = "^2.15.2"
 faker = "^38.2.0"
 testcontainers = "^4.13.3"
+asgi-lifespan = "^2.1.0"
 
 [tool.pytest.ini_options]
 markers = [

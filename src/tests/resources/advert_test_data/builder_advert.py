@@ -1,10 +1,8 @@
 # advert_builder.py
 from models.advert import Advert
-from tests.resources.user_test_data.mother_object_user import MotherUser
-from tests.resources.category_test_data.mother_object_category import MotherCategory
 from tests.resources.advert_test_data.mother_object_advert import MotherAdvert
 from uuid import UUID
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 class AdvertBuilder:
