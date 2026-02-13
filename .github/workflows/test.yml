@@ -78,6 +78,13 @@ jobs:
         working-directory: ./src  # ← ВАЖНО!
         run: docker build -f Dockerfile.test -t test-runner .
 
+      - name: Clean docker cache  # ← ДОБАВЬ ЭТО!
+        run: docker system prune -f
+
+      - name: Build test image with no cache  # ← И ЭТО!
+        run: docker build --no-cache -f Dockerfile.test -t test-runner .
+
+
       - name: Run integration tests
         working-directory: ./src  # ← ВАЖНО!
         run: |
