@@ -5,6 +5,10 @@ from uuid import UUID
 pytestmark = pytest.mark.asyncio
 
 
+
+
+
+
 class TestCategoriesAPI:
     """Тесты для API категорий."""
 
