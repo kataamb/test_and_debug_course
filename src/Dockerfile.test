@@ -24,4 +24,4 @@ RUN chmod +x ./scripts/tests/*.sh
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
-CMD ["./scripts/test/run-integration-tests.sh"]
+CMD ["./scripts/tests/run-integration-tests.sh"]
