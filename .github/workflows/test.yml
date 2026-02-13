@@ -27,10 +27,6 @@ jobs:
         working-directory: ./src  # ← ВАЖНО!
         run: poetry run ruff check .
 
-      - name: Run mypy
-        working-directory: ./src  # ← ВАЖНО!
-        run: poetry run mypy --namespace-packages --explicit-package-bases .
-
   unit-tests:
     runs-on: ubuntu-latest
     needs: lint

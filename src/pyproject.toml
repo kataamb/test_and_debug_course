@@ -44,7 +44,6 @@ pytest = "^8.4.1"
 types-python-jose = "^3.5.0.20250531"
 allure-pytest = "^2.15.3"
 allure-python-commons = "^2.15.3"
-types-httpx = "^0.20.0"
 
 
 [tool.poetry.group.test.dependencies]
