@@ -16,3 +16,17 @@ services:
       timeout: 5s
       retries: 5
     command: ["postgres", "-c", "max_connections=200"]
+
+
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      postgres_test:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@postgres_test:5432/postgres
+    volumes:
+      - ./test-results:/app/test-results
+      - ./coverage-reports:/app/coverage-reports
