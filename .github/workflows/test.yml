@@ -82,6 +82,7 @@ jobs:
         run: docker system prune -f
 
       - name: Build test image with no cache  # ← И ЭТО!
+        working-directory: ./src
         run: docker build --no-cache -f Dockerfile.test -t test-runner .
 
 
