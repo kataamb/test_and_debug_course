@@ -19,7 +19,6 @@ RUN poetry config virtualenvs.create false \
 # Копируем код
 COPY . .
 
-RUN chmod +x ./scripts/test/*.sh
 
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
