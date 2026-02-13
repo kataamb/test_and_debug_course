@@ -1,15 +1,27 @@
 FROM python:3.13-slim
 
-# Устанавливаем postgresql-client - КАК У ДРУГА!
+# Устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y \
     postgresql-client \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
-RUN pip install poetry && poetry install
+# Устанавливаем Poetry
+RUN pip install poetry
 
+# Копируем зависимости
+COPY pyproject.toml poetry.lock ./
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-ansi --with dev
+
+# Копируем код
 COPY . .
 
-CMD ["poetry", "run", "pytest", "tests/integration/", "-v"]
+RUN chmod +x ./scripts/test/*.sh
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+CMD ["./scripts/test/run-integration-tests.sh"]
