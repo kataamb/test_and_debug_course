@@ -7,3 +7,5 @@ __pycache__/
 .idea
 .coverage
 **/__pycache__/
+git status
+data_volumes/
