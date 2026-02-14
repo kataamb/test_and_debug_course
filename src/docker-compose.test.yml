@@ -30,5 +30,5 @@ services:
       - DATABASE_URL=postgresql://postgres:1234@postgres_test:5432/postgres
       - CI=true
     volumes:
-      - ./test-results:/app/test-results
-      - ./coverage-reports:/app/coverage-reports
+      - ./test-results:/app/src/test-results
+      - ./coverage-reports:/app/src/coverage-reports
