@@ -1,0 +1,1 @@
+{'id': '00000000-0000-0000-0000-000000000001', 'content': 'smartphone', 'description': 'some description', 'id_category': '00000000-0000-0000-0000-000000000001', 'price': 19900, 'id_seller': '00000000-0000-0000-0000-000000000001', 'date_created': datetime.datetime(2026, 2, 14, 13, 31, 4, 430579, tzinfo=datetime.timezone.utc)}
