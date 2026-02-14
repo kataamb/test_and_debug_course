@@ -148,7 +148,10 @@ jobs:
           #for dir in $(find artifacts -type d -name "allure-results*"); do
           #    cp -r "$dir"/. merged-results/
           #done
-          find artifacts -type -name "*.json" | xargs -I {} cp -r {}/. merged-results/
+          for dir in $(find artifacts -type d -name "allure-results*"); do
+              echo "Copying $dir"
+              cp -r "$dir"/. merged-results/
+          done
           allure generate merged-results/ -o allure-report --clean
 
       - name: Deploy Allure report
