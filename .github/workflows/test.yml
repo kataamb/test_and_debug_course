@@ -98,13 +98,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: integration-test-results
-          path: src/test-results/  # ← путь с src/
+          path: test-results/  # ← путь с src/
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
           name: coverage-reports
-          path: src/coverage-reports/  # ← путь с src/
+          path: coverage-reports/  # ← путь с src/
 
   report:
     runs-on: ubuntu-latest
