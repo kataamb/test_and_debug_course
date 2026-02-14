@@ -74,33 +74,18 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y docker-compose
 
-      - name: Build test image
-        working-directory: ./src  # ← ВАЖНО!
-        run: docker build -f Dockerfile.test -t test-runner .
-
-      - name: Clean docker cache  # ← ДОБАВЬ ЭТО!
-        run: docker system prune -f
-
-      - name: Build test image with no cache  # ← И ЭТО!
-        working-directory: ./src
-        run: docker build --no-cache -f Dockerfile.test -t test-runner .
-
 
       - name: Start test database
         working-directory: ./src
         run: |
             # Запускаем БД в фоне
-            docker-compose -f docker-compose.test.yml up -d postgres-test
+            docker compose -f docker-compose.test.yml up -d postgres_test
 
       - name: Wait for database
         working-directory: ./src
         run: |
           # Цикл ожидания с проверкой через pg_isready
-          until docker-compose -f docker-compose.test.yml exec -T postgres-test pg_isready -U postgres; do
-            sleep 2
-          done
-          
-          sleep 5
+          docker compose -f docker-compose.test.yml wait postgres_test
 
       - name: Build test image
         working-directory: ./src
