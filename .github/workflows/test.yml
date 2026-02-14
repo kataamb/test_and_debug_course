@@ -49,6 +49,7 @@ jobs:
         run: |
           poetry run pytest tests/unit/ -v \
             --junitxml=test-results/unit-tests.xml \
+            --alluredir=test-results/allure-results-unit \
             --cov=. --cov-report=xml:coverage-reports/unit-coverage.xml
 
       - name: Upload unit test results
