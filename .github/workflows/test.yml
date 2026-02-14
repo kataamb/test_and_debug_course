@@ -139,7 +139,10 @@ jobs:
         run: |
           npm install -g allure-commandline
           mkdir merged-results
-          find artifacts -type d -name "allure-results" -exec cp -r "{}"/* merged-results/ \;
+          # Копируем все содержимое каждой allure-results в merged-results
+          for dir in $(find artifacts -type d -name "allure-results"); do
+              cp -r "$dir"/. merged-results/
+          done
           allure generate merged-results/ -o allure-report --clean
 
       - name: Deploy Allure report
