@@ -133,7 +133,11 @@ jobs:
           find artifacts -type d -name "allure-results" | head -10
           echo "=== Searching for any JSON files ==="
           find artifacts -name "*.json" | head -20
-          
+
+      - name: Check unit-test allure-results
+        run: |
+          find artifacts/test-results/ -type d -name "allure-results-unit" -print
+          find artifacts/test-results/allure-results-unit -type f -name "*.json"
 
       - name: Generate Allure report
         run: |
