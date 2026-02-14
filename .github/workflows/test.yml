@@ -118,6 +118,15 @@ jobs:
         with:
           path: artifacts/
 
+      - name: Debug artifacts structure
+        run: |
+          echo "=== Artifacts structure ==="
+          find artifacts -type f -name "*.json" | head -20
+          echo "=== Allure results count ==="
+          find artifacts -type d -name "allure-results" | wc -l
+          echo "=== First allure-results content ==="
+          find artifacts -type d -name "allure-results" -print -quit | xargs ls -la
+
       - name: Generate Allure report
         run: |
           npm install -g allure-commandline
