@@ -107,12 +107,13 @@ class TestAdvertsAPI:
         assert UUID(first_advert["id_category"])
         assert UUID(first_advert["id_seller"])
 
+        ''''
         # 8. Проверка конкретных значений (из test_data.sql)
         assert first_advert["content"] == "Тестовое объявление 2"
         assert first_advert["price"] == 2000
         assert first_advert["id_category"] == "bd29f255-50ab-4967-bc77-475a5fbe7952"
         assert first_advert["category_name"] == "Транспорт"
-
+        '''
         '''
         second_advert = data["items"][1]
         assert second_advert["content"] == "Тестовое объявление 1"

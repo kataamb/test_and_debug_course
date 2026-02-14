@@ -69,10 +69,10 @@ app.dependency_overrides[get_db_session] = override_get_db_session
 def db_url() -> str:
     """URL для подключения к контейнеру Postgres."""
     #return "postgresql://postgres:1234@localhost:5439/postgres"
-    #if os.environ.get('CI'):
-    #    return "postgresql://postgres:1234@postgres_test:5432/postgres"
-    #return "postgresql://postgres:1234@localhost:5439/postgres"
-    return "postgresql://postgres:1234@postgres_test:5432/postgres"
+    if os.environ.get('CI'):
+        return "postgresql://postgres:1234@postgres_test:5432/postgres"
+    return "postgresql://postgres:1234@localhost:5439/postgres"
+    #return "postgresql://postgres:1234@postgres_test:5432/postgres"
 
 
 @pytest.fixture(scope="session")
