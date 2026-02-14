@@ -121,6 +121,8 @@ jobs:
       - name: Generate Allure report
         run: |
           npm install -g allure-commandline
+          mkdir merged-results
+          cp -r artifacts/**/allure-results/* merged-results/ || true
           allure generate artifacts/ -o allure-report --clean
 
       - name: Deploy Allure report
