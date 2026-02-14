@@ -81,12 +81,6 @@ jobs:
             # Запускаем БД в фоне
             docker compose -f docker-compose.test.yml up -d postgres_test
 
-      - name: Wait for database
-        working-directory: ./src
-        run: |
-          # Цикл ожидания с проверкой через pg_isready
-          docker compose -f docker-compose.test.yml wait postgres_test
-
       - name: Build test image
         working-directory: ./src
         run: docker build -f Dockerfile.test -t test-runner .
