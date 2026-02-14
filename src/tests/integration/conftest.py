@@ -91,29 +91,26 @@ async def test_database(db_url: str, unique_db_name: str) -> AsyncGenerator[str,
     await conn.close()
 
     db_url_with_db = f"{db_url.rsplit('/', 1)[0]}/{unique_db_name}"
-
-    # 2. УСТАНАВЛИВАЕМ URL для тестовой сессии!
     set_test_db_url(db_url_with_db)
 
-    # 3. Создаём таблицы через psql
+    # 2. Создаём таблицы через psql (используем тот же URL!)
     subprocess.run([
-        "psql", db_url_with_db,
+        "psql", db_url_with_db,  # ← здесь ТОТ ЖЕ URL!
         "-f", "tests/integration/fixtures/create_tables.sql"
     ], check=True)
 
-    # 4. Загружаем тестовые данные
+    # 3. Загружаем тестовые данные
     subprocess.run([
-        "psql", db_url_with_db,
+        "psql", db_url_with_db,  # ← и здесь!
         "-f", "tests/integration/fixtures/test_data.sql"
     ], check=True)
 
     yield db_url_with_db
 
-    # 5. Удаляем БД
+    # 4. Удаляем БД
     conn = await asyncpg.connect(db_url)
     await conn.execute(f"DROP DATABASE IF EXISTS {unique_db_name} WITH (FORCE)")
     await conn.close()
-
 
 @pytest_asyncio.fixture
 async def client() -> AsyncGenerator[AsyncClient, None]:
