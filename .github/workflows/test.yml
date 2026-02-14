@@ -127,6 +127,14 @@ jobs:
           echo "=== First allure-results content ==="
           find artifacts -type d -name "allure-results" -print -quit | xargs ls -la
 
+      - name: Find allure-results
+        run: |
+          echo "=== Searching for allure-results ==="
+          find artifacts -type d -name "allure-results" | head -10
+          echo "=== Searching for any JSON files ==="
+          find artifacts -name "*.json" | head -20
+          
+
       - name: Generate Allure report
         run: |
           npm install -g allure-commandline
